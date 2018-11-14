@@ -24,7 +24,7 @@ helm list
 
 kubectl get "deployments,pods,services,ingress,secrets" --namespace=$namespace -o wide
 
-Start-Sleep -Seconds 10
+Start-Sleep -Seconds 30
 
 kubectl logs -l app=certificategenerator -n kube-system
 
