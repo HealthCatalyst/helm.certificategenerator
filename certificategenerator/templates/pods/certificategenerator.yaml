@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata: {{ $fullname := printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
   name: {{ $fullname }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
@@ -32,5 +32,7 @@ spec:
             value: "true"
           - name: SLEEP_FOREVER
             value: "true"
+          - name: SECRET_NAMESPACE
+            value: {{ .Release.Namespace }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
