@@ -16,6 +16,7 @@ namespace: "kube-system"
 certhostname: ""
 certpassword: ""
 clientCertificateUser: ""
+saveCertsAsSecrets: true
 
 service:
   type: ClusterIP

@@ -1,22 +1,20 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata: {{ $fullname := printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" }}
   name: {{ $fullname }}
   namespace: {{ .Release.Namespace }}
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
-  replicas: {{ default 1 .Values.replicaCount | int }}
-  strategy:
-    # We need to kill the existing Pod before creating an new one
-    # for the new one to be able to attach the persistent disk.
-    type: Recreate
+  backoffLimit: 5
+  activeDeadlineSeconds: 100
   template:
     metadata:
       labels:
         app: {{ .Chart.Name }}
     spec:
       serviceAccountName: certificategenerator-user
+      restartPolicy: Never
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -28,10 +26,10 @@ spec:
             value: {{ .Values.certpassword }}
           - name: CLIENT_CERT_USER
             value: {{ .Values.clientCertificateUser }}
+          {{ if .Values.saveCertsAsSecrets }}
           - name: SAVE_KUBERNETES_SECRET
             value: "true"
-          - name: SLEEP_FOREVER
-            value: "true"
+          {{ end }}
           - name: SECRET_NAMESPACE
             value: {{ .Release.Namespace }}
         resources:
