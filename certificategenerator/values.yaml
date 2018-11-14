@@ -5,12 +5,17 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
-  pullPolicy: IfNotPresent
+  repository: healthcatalyst/fabric.docker.certificategenerator
+  tag: latest
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
+namespace: "kube-system"
+
+certhostname: ""
+certpassword: ""
+clientCertificateUser: ""
 
 service:
   type: ClusterIP
